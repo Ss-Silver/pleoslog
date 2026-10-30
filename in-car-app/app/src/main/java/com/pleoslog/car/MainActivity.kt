@@ -13,11 +13,15 @@ import com.pleoslog.car.data.model.RoutePointRequest
 import com.pleoslog.car.data.model.BatchRouteRequest
 import com.pleoslog.car.data.model.StartSessionRequest
 import com.pleoslog.car.databinding.ActivityMainBinding
+import com.pleoslog.car.location.CarLocationManager
 import com.pleoslog.car.vehicle.PleosVehicleManager
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
@@ -25,13 +29,20 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var vehicleManager: PleosVehicleManager
+    private lateinit var locationManager: CarLocationManager
 
     private var currentGear: String = "P"
     private var currentSpeed: Int = 0
     private var currentOdometer: Double = 14500.0
+    private var sessionStartOdometer: Double = 14500.0
     private var isDrivingSessionActive: Boolean = false
     private var activeSessionId: Long? = null
     private var routeTrackingJob: Job? = null
+    private var tripTimerJob: Job? = null
+    private var tripElapsedSeconds: Long = 0L
+
+    // Driving Purpose: BUSINESS, COMMUTE, PERSONAL
+    private var selectedPurpose: String = "BUSINESS"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +51,8 @@ class MainActivity : AppCompatActivity() {
 
         initViews()
         setupListeners()
+        setupPurposeSelectors()
+        initLocationManager()
         initPleosVehicleSdk()
     }
 
@@ -48,6 +61,10 @@ class MainActivity : AppCompatActivity() {
         updateSpeedUI(0)
         updateOdometerUI(currentOdometer)
         updateSessionStatusUI(false)
+        binding.tvTripDistance.text = "0.0 km"
+        binding.tvTripDuration.text = "00:00:00"
+        binding.tvDrivingMode.text = "성남시 수정구 시흥동"
+        binding.tvStartAddress.text = "출발 대기 중"
     }
 
     private fun setupListeners() {
@@ -65,6 +82,60 @@ class MainActivity : AppCompatActivity() {
         binding.btnToggleSpeed.setOnClickListener {
             toggleSpeed()
         }
+    }
+
+    private fun setupPurposeSelectors() {
+        binding.btnPurposeBusiness.setOnClickListener {
+            selectPurpose("BUSINESS")
+        }
+        binding.btnPurposeCommute.setOnClickListener {
+            selectPurpose("COMMUTE")
+        }
+        binding.btnPurposePersonal.setOnClickListener {
+            selectPurpose("PERSONAL")
+        }
+    }
+
+    private fun selectPurpose(purpose: String) {
+        selectedPurpose = purpose
+        val selectedBg = ContextCompat.getDrawable(this, R.drawable.bg_purpose_selected)
+        val unselectedBg = ContextCompat.getDrawable(this, R.drawable.bg_purpose_unselected)
+        val skyColor = ContextCompat.getColor(this, R.color.hyundai_sky)
+        val primaryColor = ContextCompat.getColor(this, R.color.text_primary)
+
+        // Reset all
+        binding.btnPurposeBusiness.background = unselectedBg
+        binding.tvPurposeBusinessTitle.setTextColor(primaryColor)
+        binding.btnPurposeCommute.background = unselectedBg
+        binding.tvPurposeCommuteTitle.setTextColor(primaryColor)
+        binding.btnPurposePersonal.background = unselectedBg
+        binding.tvPurposePersonalTitle.setTextColor(primaryColor)
+
+        when (purpose) {
+            "BUSINESS" -> {
+                binding.btnPurposeBusiness.background = selectedBg
+                binding.tvPurposeBusinessTitle.setTextColor(skyColor)
+            }
+            "COMMUTE" -> {
+                binding.btnPurposeCommute.background = selectedBg
+                binding.tvPurposeCommuteTitle.setTextColor(skyColor)
+            }
+            "PERSONAL" -> {
+                binding.btnPurposePersonal.background = selectedBg
+                binding.tvPurposePersonalTitle.setTextColor(skyColor)
+            }
+        }
+    }
+
+    private fun initLocationManager() {
+        locationManager = CarLocationManager(this).apply {
+            onLocationChanged = { lat, lon, addr ->
+                runOnUiThread {
+                    binding.tvDrivingMode.text = addr
+                }
+            }
+        }
+        locationManager.startListening()
     }
 
     private fun initPleosVehicleSdk() {
@@ -85,6 +156,10 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread {
                     currentOdometer = odoKm
                     updateOdometerUI(currentOdometer)
+                    if (isDrivingSessionActive) {
+                        val trip = maxOf(0.0, currentOdometer - sessionStartOdometer)
+                        binding.tvTripDistance.text = "${String.format("%.1f", trip)} km"
+                    }
                 }
             }
 
@@ -111,10 +186,18 @@ class MainActivity : AppCompatActivity() {
 
         currentGear = "D"
         isDrivingSessionActive = true
+        sessionStartOdometer = currentOdometer
         if (currentSpeed == 0) currentSpeed = 45
         updateGearUI("D")
         updateSpeedUI(currentSpeed)
         updateSessionStatusUI(true)
+
+        val timeStr = SimpleDateFormat("HH:mm", Locale.KOREA).format(Date())
+        binding.tvStartAddress.text = "${locationManager.currentAddress} ($timeStr)"
+
+        // Start location movement simulation while in DRIVE
+        locationManager.startDrivingSimulation(currentSpeed)
+        startTripDurationTimer()
 
         val triggerSource = if (isManual) "수동 버튼" else "Pleos CAN VHAL"
         Toast.makeText(this, "[$triggerSource] D단 출발 감지: 국세청 운행일지 자동 기록 시작 (Zero-Click)", Toast.LENGTH_SHORT).show()
@@ -132,6 +215,13 @@ class MainActivity : AppCompatActivity() {
             currentOdometer += 24.3 // 수동 시연 시 24.3km 가산
         }
 
+        val finalTrip = maxOf(0.0, currentOdometer - sessionStartOdometer)
+        binding.tvTripDistance.text = "${String.format("%.1f", finalTrip)} km"
+
+        // Stop simulation and timer
+        locationManager.stopDrivingSimulation()
+        stopTripDurationTimer()
+
         updateGearUI("P")
         updateSpeedUI(0)
         updateOdometerUI(currentOdometer)
@@ -143,6 +233,26 @@ class MainActivity : AppCompatActivity() {
         completeBackendSession()
     }
 
+    private fun startTripDurationTimer() {
+        tripTimerJob?.cancel()
+        tripElapsedSeconds = 0L
+        tripTimerJob = lifecycleScope.launch {
+            while (isActive && isDrivingSessionActive) {
+                delay(1000L)
+                tripElapsedSeconds++
+                val hours = tripElapsedSeconds / 3600
+                val minutes = (tripElapsedSeconds % 3600) / 60
+                val seconds = tripElapsedSeconds % 60
+                binding.tvTripDuration.text = String.format("%02d:%02d:%02d", hours, minutes, seconds)
+            }
+        }
+    }
+
+    private fun stopTripDurationTimer() {
+        tripTimerJob?.cancel()
+        tripTimerJob = null
+    }
+
     private fun startBackendSession() {
         lifecycleScope.launch {
             try {
@@ -150,9 +260,9 @@ class MainActivity : AppCompatActivity() {
                     vehicleId = 1L,
                     userId = 1L,
                     startOdometer = currentOdometer,
-                    startLatitude = 37.5665,
-                    startLongitude = 126.9780,
-                    startAddress = "서울 서초구 현대자동차 양재본사"
+                    startLatitude = locationManager.currentLatitude,
+                    startLongitude = locationManager.currentLongitude,
+                    startAddress = locationManager.currentAddress
                 )
                 val response = ApiClient.apiService.startSession(request)
                 if (response.isSuccessful && response.body()?.success == true) {
@@ -172,25 +282,21 @@ class MainActivity : AppCompatActivity() {
     private fun startPeriodicRouteTracking(sessionId: Long) {
         routeTrackingJob?.cancel()
         routeTrackingJob = lifecycleScope.launch {
-            var lat = 37.5665
-            var lon = 126.9780
             while (isActive && isDrivingSessionActive) {
-                delay(10000) // Every 10 seconds
+                delay(5000) // Every 5 seconds
                 if (!isDrivingSessionActive) break
 
-                lat += 0.001
-                lon += 0.001
                 try {
                     val points = listOf(
                         RoutePointRequest(
-                            latitude = lat,
-                            longitude = lon,
+                            latitude = locationManager.currentLatitude,
+                            longitude = locationManager.currentLongitude,
                             speedKmh = currentSpeed,
                             odometerSnapshot = currentOdometer
                         )
                     )
                     ApiClient.apiService.recordRoutes(sessionId, BatchRouteRequest(points))
-                    Log.d(tag, "Recorded GPS breadcrumb: lat=$lat, lon=$lon")
+                    Log.d(tag, "Recorded GPS breadcrumb: lat=${locationManager.currentLatitude}, lon=${locationManager.currentLongitude} (${locationManager.currentAddress})")
                 } catch (e: Exception) {
                     Log.w(tag, "Route upload skipped: ${e.message}")
                 }
@@ -208,15 +314,15 @@ class MainActivity : AppCompatActivity() {
                 try {
                     val request = CompleteSessionRequest(
                         endOdometer = currentOdometer,
-                        endLatitude = 37.5172,
-                        endLongitude = 127.0473,
-                        endAddress = "서울 강남구 역삼동 고객사 미팅",
-                        purposeType = "BUSINESS",
+                        endLatitude = locationManager.currentLatitude,
+                        endLongitude = locationManager.currentLongitude,
+                        endAddress = locationManager.currentAddress,
+                        purposeType = selectedPurpose,
                         notes = "Pleos Connect Zero-Click 자동 기록"
                     )
                     val response = ApiClient.apiService.completeSession(sessionId, request)
                     if (response.isSuccessful) {
-                        Log.i(tag, "Backend session #$sessionId successfully completed.")
+                        Log.i(tag, "Backend session #$sessionId successfully completed: ${locationManager.currentAddress} ($selectedPurpose)")
                     }
                 } catch (e: Exception) {
                     Log.w(tag, "Failed to complete backend session: ${e.message}")
@@ -295,6 +401,8 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         routeTrackingJob?.cancel()
+        tripTimerJob?.cancel()
+        locationManager.stop()
         vehicleManager.release()
     }
 }
