@@ -23,3 +23,12 @@ local.properties
 
 # Log files
 *.log
+
+# Node / Web Frontend
+node_modules/
+dist/
+dist-ssr/
+*.local
+*.tsbuildinfo
+
+
