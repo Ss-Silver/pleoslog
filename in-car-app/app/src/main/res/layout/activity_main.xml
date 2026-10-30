@@ -5,13 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/cockpit_bg"
-    android:padding="20dp">
+    android:padding="16dp">
 
-    <!-- Top Header: Title, Vehicle Tag, Pairing PIN, VHAL Status -->
+    <!-- Header: App Title, Vehicle Tag, Pairing PIN, Cloud Sync Status -->
     <LinearLayout
         android:id="@+id/headerLayout"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="36dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
@@ -19,33 +19,32 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
             android:contentDescription="@string/app_name"
             android:src="@drawable/ic_car_launcher" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="14dp"
+            android:layout_marginStart="10dp"
             android:layout_weight="1"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/tvAppTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Pleos Log"
                 android:textColor="@color/text_primary"
-                android:textSize="18sp"
+                android:textSize="17sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="|  업무용 승용차 법정 운행일지"
+                android:text="|  업무용 승용차 법정 운행기록부"
                 android:textColor="@color/text_secondary"
                 android:textSize="13sp" />
 
@@ -63,20 +62,20 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <!-- Pairing PIN Code -->
+        <!-- Web Dashboard Pairing PIN -->
         <TextView
             android:id="@+id/tvPairingCode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_status_badge"
             android:paddingHorizontal="12dp"
-            android:paddingVertical="5dp"
+            android:paddingVertical="4dp"
             android:text="@string/pairing_code_label"
             android:textColor="@color/hyundai_sky"
             android:textSize="12sp"
             android:textStyle="bold" />
 
-        <!-- VHAL Status Indicator -->
+        <!-- Stationary Background Recording Status Badge -->
         <TextView
             android:id="@+id/tvServerStatus"
             android:layout_width="wrap_content"
@@ -84,272 +83,159 @@
             android:layout_marginStart="10dp"
             android:background="@drawable/bg_status_badge"
             android:paddingHorizontal="12dp"
-            android:paddingVertical="5dp"
-            android:text="PLEOS VHAL ONLINE"
+            android:paddingVertical="4dp"
+            android:text="🟢 자동 기록 대기 중 (정차)"
             android:textColor="@color/status_green"
             android:textSize="12sp"
             android:textStyle="bold" />
     </LinearLayout>
 
-    <!-- Mid-Upper Tier: 2 Cards (Cluster Speed & Active Session) -->
-    <!-- Card 1 (Left): Vehicle Speed & Gear Cluster -->
+    <!-- Card 1: Recently Completed Driving Session & Purpose Confirmation (Top Section) -->
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cardSpeedometer"
+        android:id="@+id/cardLastSession"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="14dp"
-        android:layout_marginEnd="8dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:background="@drawable/bg_cockpit_card"
-        android:padding="20dp"
-        app:layout_constraintBottom_toTopOf="@+id/cardPurposeSelection"
-        app:layout_constraintEnd_toStartOf="@+id/cardSessionState"
+        android:padding="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/headerLayout"
-        app:layout_constraintVertical_weight="1.1">
+        app:layout_constraintTop_toBottomOf="@id/headerLayout">
 
-        <TextView
-            android:id="@+id/tvSpeedLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="VEHICLE SPEED"
-            android:textColor="@color/text_secondary"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/tvCurrentSpeed"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0"
-            android:textColor="@color/text_primary"
-            android:textSize="58sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/gearSelectorLayout"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvSpeedLabel" />
-
-        <TextView
-            android:id="@+id/tvSpeedUnit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="6dp"
-            android:layout_marginBottom="12dp"
-            android:text="@string/speed_unit"
-            android:textColor="@color/text_muted"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@id/tvCurrentSpeed"
-            app:layout_constraintStart_toEndOf="@id/tvCurrentSpeed" />
-
-        <!-- Gear Selector Row -->
+        <!-- Card Title & Tax Compliance Status Badge -->
         <LinearLayout
-            android:id="@+id/gearSelectorLayout"
-            android:layout_width="wrap_content"
+            android:id="@+id/lastSessionHeader"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
-
-            <TextView
-                android:id="@+id/gearP"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginEnd="6dp"
-                android:background="@drawable/bg_gear_active_p"
-                android:gravity="center"
-                android:text="P"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/gearR"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginEnd="6dp"
-                android:background="@drawable/bg_gear_badge"
-                android:gravity="center"
-                android:text="R"
-                android:textColor="@color/gear_text_inactive"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/gearN"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginEnd="6dp"
-                android:background="@drawable/bg_gear_badge"
-                android:gravity="center"
-                android:text="N"
-                android:textColor="@color/gear_text_inactive"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/gearD"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="@drawable/bg_gear_badge"
-                android:gravity="center"
-                android:text="D"
-                android:textColor="@color/gear_text_inactive"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <!-- Current Odometer Display -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="end"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="누적 계기판 거리 (ODO)"
-                android:textColor="@color/text_muted"
-                android:textSize="11sp" />
-
-            <TextView
-                android:id="@+id/tvOdometerValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="14,500.0 km"
-                android:textColor="@color/text_primary"
-                android:textSize="22sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <!-- Card 2 (Right): Live Driving Session State -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cardSessionState"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:background="@drawable/bg_cockpit_card"
-        android:padding="20dp"
-        app:layout_constraintBottom_toBottomOf="@+id/cardSpeedometer"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/cardSpeedometer"
-        app:layout_constraintTop_toTopOf="@+id/cardSpeedometer">
-
-        <TextView
-            android:id="@+id/tvSessionLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="LIVE DRIVING SESSION"
-            android:textColor="@color/text_secondary"
-            android:textSize="12sp"
-            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/tvSessionStatusBadge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_status_badge"
-            android:paddingHorizontal="12dp"
-            android:paddingVertical="4dp"
-            android:text="@string/status_idle"
-            android:textColor="@color/hyundai_sky"
-            android:textSize="13sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🚗 방금 완료된 운행 기록"
+                android:textColor="@color/text_primary"
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
-        <!-- Route Path Breadcrumb -->
+            <TextView
+                android:id="@+id/tvSessionStatusBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/bg_status_badge"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="3dp"
+                android:text="국세청 제16호의2서식 자동 기록 완료 ✓"
+                android:textColor="@color/status_green"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/tvSessionTimeRange"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="오늘 10:15 ~ 10:48 (33분 주행)"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- Route & Distance Summary Row -->
         <LinearLayout
-            android:id="@+id/routeBreadcrumbLayout"
+            android:id="@+id/lastSessionRouteRow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="10dp"
             android:background="@drawable/bg_purpose_unselected"
-            android:orientation="vertical"
-            android:padding="12dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="12dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvSessionLabel">
+            app:layout_constraintTop_toBottomOf="@id/lastSessionHeader">
 
+            <!-- Route Details -->
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:layout_weight="2.2"
+                android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="출발"
-                    android:textColor="@color/hyundai_sky"
-                    android:textSize="11sp"
-                    android:textStyle="bold" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/tvStartAddress"
-                    android:layout_width="0dp"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_status_badge"
+                        android:paddingHorizontal="6dp"
+                        android:paddingVertical="1dp"
+                        android:text="출발"
+                        android:textColor="@color/status_green"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvStartAddr"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="서울 서초구 양재본사 (10:15 / 14,500.0 km)"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_weight="1"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:text="성남시 수정구 시흥동 (10:45)"
-                    android:textColor="@color/text_primary"
-                    android:textSize="13sp" />
+                    android:layout_marginTop="5dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_status_badge"
+                        android:paddingHorizontal="6dp"
+                        android:paddingVertical="1dp"
+                        android:text="도착"
+                        android:textColor="@color/hyundai_sky"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvRouteSummary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="성남시 수정구 시흥동 (10:48 / 14,524.3 km)"
+                        android:textColor="@color/text_primary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
             </LinearLayout>
 
             <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginVertical="6dp"
-                android:background="#1E293B" />
+                android:layout_width="1dp"
+                android:layout_height="36dp"
+                android:layout_marginHorizontal="16dp"
+                android:background="#223249" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="현재"
-                    android:textColor="@color/status_green"
-                    android:textSize="11sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tvDrivingMode"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_weight="1"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:text="성남시 수정구 시흥동"
-                    android:textColor="@color/text_primary"
-                    android:textSize="13sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <!-- Live Distance and Duration Metrics -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
-
+            <!-- Distance Metric -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -359,104 +245,88 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="구간 주행거리"
+                    android:text="운행 거리"
                     android:textColor="@color/text_muted"
                     android:textSize="11sp" />
 
                 <TextView
-                    android:id="@+id/tvTripDistance"
+                    android:id="@+id/tvLastTripDistance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0.0 km"
+                    android:layout_marginTop="1dp"
+                    android:text="24.3 km"
                     android:textColor="@color/hyundai_sky"
-                    android:textSize="20sp"
+                    android:textSize="19sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
+            <View
+                android:layout_width="1dp"
+                android:layout_height="36dp"
+                android:layout_marginHorizontal="16dp"
+                android:background="#223249" />
+
+            <!-- Arrival Odometer -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="1.2"
                 android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="주행 시간"
+                    android:text="도착 계기판 (ODO)"
                     android:textColor="@color/text_muted"
                     android:textSize="11sp" />
 
                 <TextView
-                    android:id="@+id/tvTripDuration"
+                    android:id="@+id/tvOdometerValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="00:00:00"
+                    android:layout_marginTop="1dp"
+                    android:text="14,524.3 km"
                     android:textColor="@color/text_primary"
-                    android:textSize="20sp"
+                    android:textSize="19sp"
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Lower Tier: Full Height Utilization (Purpose Selector & Today KPI) -->
-    <!-- Card 3 (Left): One-Touch Driving Purpose Selector -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cardPurposeSelection"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="12dp"
-        android:background="@drawable/bg_cockpit_card"
-        android:padding="18dp"
-        app:layout_constraintBottom_toTopOf="@+id/cardControls"
-        app:layout_constraintEnd_toStartOf="@+id/cardTodayKpi"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cardSpeedometer"
-        app:layout_constraintVertical_weight="1.1">
-
+        <!-- Purpose Confirmation & Change Section -->
         <TextView
-            android:id="@+id/tvPurposeTitle"
+            android:id="@+id/tvPurposeLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="운행 목적 선택 (국세청 별지 제16호의2서식)"
+            android:layout_marginTop="12dp"
+            android:text="운행 목적 원터치 확인 (터치 시 국세청 법정 서식에 즉시 업데이트됩니다)"
             android:textColor="@color/text_secondary"
             android:textSize="12sp"
-            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/lastSessionRouteRow" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="* P단 정차 시 선택된 목적으로 자동 확정"
-            android:textColor="@color/text_muted"
-            android:textSize="11sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <!-- 3 One-Touch Purpose Cards -->
+        <!-- Purpose 3 Cards with Horizontal Layout inside each card to prevent text clipping -->
         <LinearLayout
+            android:id="@+id/purposeButtonsLayout"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="10dp"
+            android:layout_height="62dp"
+            android:layout_marginTop="8dp"
             android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvPurposeTitle">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvPurposeLabel">
 
             <!-- Purpose 1: Business (Default Selected) -->
             <LinearLayout
                 android:id="@+id/btnPurposeBusiness"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_marginEnd="6dp"
+                android:layout_marginEnd="8dp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_purpose_selected"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="10dp">
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="14dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -464,24 +334,31 @@
                     android:text="💼"
                     android:textSize="22sp" />
 
-                <TextView
-                    android:id="@+id/tvPurposeBusinessTitle"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="일반 업무용"
-                    android:textColor="@color/hyundai_sky"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:text="고객사·출장\n(비용 100% 인정)"
-                    android:textAlignment="center"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="10sp" />
+                    <TextView
+                        android:id="@+id/tvPurposeBusinessTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="일반 업무용"
+                        android:textColor="@color/hyundai_sky"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvPurposeBusinessSub"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="1dp"
+                        android:text="고객사 미팅 · 100% 비용인정"
+                        android:textColor="@color/hyundai_sky"
+                        android:textSize="10sp" />
+                </LinearLayout>
             </LinearLayout>
 
             <!-- Purpose 2: Commute -->
@@ -489,14 +366,14 @@
                 android:id="@+id/btnPurposeCommute"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_marginEnd="6dp"
+                android:layout_marginEnd="8dp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_purpose_unselected"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="10dp">
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="14dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -504,24 +381,31 @@
                     android:text="🏠"
                     android:textSize="22sp" />
 
-                <TextView
-                    android:id="@+id/tvPurposeCommuteTitle"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="출·퇴근용"
-                    android:textColor="@color/text_primary"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:text="자택 ↔ 회사\n(법정 인정)"
-                    android:textAlignment="center"
-                    android:textColor="@color/text_muted"
-                    android:textSize="10sp" />
+                    <TextView
+                        android:id="@+id/tvPurposeCommuteTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="출·퇴근용"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvPurposeCommuteSub"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="1dp"
+                        android:text="자택 ↔ 사업장 · 법정 인정"
+                        android:textColor="@color/text_muted"
+                        android:textSize="10sp" />
+                </LinearLayout>
             </LinearLayout>
 
             <!-- Purpose 3: Personal -->
@@ -533,9 +417,9 @@
                 android:background="@drawable/bg_purpose_unselected"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="10dp">
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="14dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -543,72 +427,108 @@
                     android:text="☕"
                     android:textSize="22sp" />
 
-                <TextView
-                    android:id="@+id/tvPurposePersonalTitle"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="비업무용"
-                    android:textColor="@color/text_primary"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:text="개인 용무\n(사적 사용)"
-                    android:textAlignment="center"
-                    android:textColor="@color/text_muted"
-                    android:textSize="10sp" />
+                    <TextView
+                        android:id="@+id/tvPurposePersonalTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="비업무용"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvPurposePersonalSub"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="1dp"
+                        android:text="개인 용무 · 경비 불인정"
+                        android:textColor="@color/text_muted"
+                        android:textSize="10sp" />
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Card 4 (Right): Today's Fleet Summary & Tax Compliance Widget -->
+    <!-- Card 2: Today's Trip Log History (Bottom Section - Flexible) -->
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cardTodayKpi"
+        android:id="@+id/cardTodayHistory"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:background="@drawable/bg_cockpit_card"
-        android:padding="18dp"
-        app:layout_constraintBottom_toBottomOf="@+id/cardPurposeSelection"
+        android:padding="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottomBar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/cardPurposeSelection"
-        app:layout_constraintTop_toTopOf="@+id/cardPurposeSelection">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cardLastSession">
 
-        <TextView
-            android:id="@+id/tvKpiTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="오늘의 법인차량 운행 현황"
-            android:textColor="@color/text_secondary"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="국세청 공제 100% 충족"
-            android:textColor="@color/status_green"
-            android:textSize="11sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <!-- 3 Metric Pillars -->
+        <!-- Today Summary Header -->
         <LinearLayout
-            android:id="@+id/kpiMetricsLayout"
+            android:id="@+id/todayHeaderLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:gravity="center_vertical"
             android:orientation="horizontal"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvKpiTitle">
+            app:layout_constraintTop_toTopOf="parent">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="📋 오늘의 법정 운행 내역"
+                android:textColor="@color/text_primary"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvTodayStatsBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/bg_status_badge"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="3dp"
+                android:text="오늘 2건 완료 (총 42.5 km) | 법정 업무비율 100% ✓"
+                android:textColor="@color/hyundai_sky"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="국세청 제16호의2서식 실시간 동기화"
+                android:textColor="@color/text_muted"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <!-- KPI Summary Bar: 4 stats in a row -->
+        <LinearLayout
+            android:id="@+id/kpiBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_purpose_unselected"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/todayHeaderLayout">
+
+            <!-- KPI 1 -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -618,43 +538,87 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="오늘 운행"
+                    android:text="오늘 총 주행"
                     android:textColor="@color/text_muted"
-                    android:textSize="11sp" />
+                    android:textSize="10sp" />
 
                 <TextView
-                    android:id="@+id/tvTodayTrips"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="3 건"
+                    android:layout_marginTop="1dp"
+                    android:text="42.5 km (2건)"
                     android:textColor="@color/text_primary"
-                    android:textSize="18sp"
+                    android:textSize="13sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
+            <View
+                android:layout_width="1dp"
+                android:layout_height="22dp"
+                android:layout_marginHorizontal="10dp"
+                android:background="#223249" />
+
+            <!-- KPI 2 -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1.2"
+                android:layout_weight="1"
                 android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="업무 주행"
+                    android:text="업무 인정 거리"
                     android:textColor="@color/text_muted"
-                    android:textSize="11sp" />
+                    android:textSize="10sp" />
 
                 <TextView
-                    android:id="@+id/tvTodayDistance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="48.5 km"
+                    android:layout_marginTop="1dp"
+                    android:text="42.5 km"
                     android:textColor="@color/hyundai_sky"
-                    android:textSize="18sp"
+                    android:textSize="13sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
+            <View
+                android:layout_width="1dp"
+                android:layout_height="22dp"
+                android:layout_marginHorizontal="10dp"
+                android:background="#223249" />
+
+            <!-- KPI 3 -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="법정 업무사용비율"
+                    android:textColor="@color/text_muted"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:text="100.0% (전액 인정)"
+                    android:textColor="@color/status_green"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="22dp"
+                android:layout_marginHorizontal="10dp"
+                android:background="#223249" />
+
+            <!-- KPI 4 -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -664,99 +628,304 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="업무사용비율"
+                    android:text="국세청 공제 인정"
                     android:textColor="@color/text_muted"
-                    android:textSize="11sp" />
+                    android:textSize="10sp" />
 
                 <TextView
-                    android:id="@+id/tvTodayBusinessRatio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="100.0 %"
-                    android:textColor="@color/status_green"
-                    android:textSize="18sp"
+                    android:layout_marginTop="1dp"
+                    android:text="1,500만원 초과 전액 손금"
+                    android:textColor="@color/hyundai_sky"
+                    android:textSize="13sp"
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Zero-Click Arrival Assurance Banner -->
+        <!-- Trip Log Items List (Recent Sessions with rich details) -->
         <LinearLayout
+            android:id="@+id/tripListLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#151E2E"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@+id/taxAssuranceBar"
+            app:layout_constraintTop_toBottomOf="@id/kpiBarLayout">
+
+            <!-- Trip Item 1 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginBottom="6dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_purpose_unselected"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="6dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🕒 10:15 ~ 10:48 (33분)"
+                        android:textColor="@color/text_muted"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="서울 서초구 양재본사  ➔  성남시 수정구 시흥동"
+                        android:textColor="@color/text_primary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:text="24.3 km"
+                        android:textColor="@color/hyundai_sky"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_status_badge"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="2dp"
+                        android:text="일반 업무용"
+                        android:textColor="@color/hyundai_sky"
+                        android:textSize="11sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:text="계기판 적산: 출발 14,500.0 km  ➔  도착 14,524.3 km  |  국세청 별지 제16호의2서식 제4란 반영 완료"
+                    android:textColor="@color/text_muted"
+                    android:textSize="10sp" />
+            </LinearLayout>
+
+            <!-- Trip Item 2 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginBottom="6dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_purpose_unselected"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="6dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🕒 08:30 ~ 09:10 (40분)"
+                        android:textColor="@color/text_muted"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="경기 성남시 분당구 자택  ➔  서울 서초구 양재본사"
+                        android:textColor="@color/text_primary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:text="18.2 km"
+                        android:textColor="@color/hyundai_sky"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_status_badge"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="2dp"
+                        android:text="출·퇴근용"
+                        android:textColor="@color/status_green"
+                        android:textSize="11sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:text="계기판 적산: 출발 14,481.8 km  ➔  도착 14,500.0 km  |  국세청 별지 제16호의2서식 제4란 반영 완료"
+                    android:textColor="@color/text_muted"
+                    android:textSize="10sp" />
+            </LinearLayout>
+
+            <!-- Trip Item 3 (Recent Previous Trip) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_purpose_unselected"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="6dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🕒 [어제] 18:20 ~ 19:05"
+                        android:textColor="@color/text_muted"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="서울 서초구 양재본사  ➔  경기 성남시 분당구 자택"
+                        android:textColor="@color/text_primary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:text="18.5 km"
+                        android:textColor="@color/hyundai_sky"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_status_badge"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="2dp"
+                        android:text="출·퇴근용"
+                        android:textColor="@color/status_green"
+                        android:textSize="11sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:text="계기판 적산: 출발 14,463.3 km  ➔  도착 14,481.8 km  |  국세청 별지 제16호의2서식 제4란 반영 완료"
+                    android:textColor="@color/text_muted"
+                    android:textSize="10sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Tax Assurance Footer Strip: Fills bottom meaningfully -->
+        <LinearLayout
+            android:id="@+id/taxAssuranceBar"
+            android:layout_width="match_parent"
+            android:layout_height="28dp"
+            android:background="@drawable/bg_status_badge"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingHorizontal="10dp"
-            android:paddingVertical="8dp"
+            android:paddingHorizontal="12dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="✨"
-                android:textSize="14sp" />
+                android:layout_weight="1"
+                android:text="🛡️ 국세청 고시 제2024-8호 규격 충족  |  CAN VHAL 기반 무결성 검증  |  웹 대시보드 엑셀(.xlsx) 즉시 추출 가능"
+                android:textColor="@color/hyundai_sky"
+                android:textSize="11sp" />
 
             <TextView
-                android:id="@+id/tvZeroClickHint"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
-                android:text="P단 정차 시 운전자 조작 없이 5초 후 자동 확정 저장"
-                android:textColor="@color/text_secondary"
-                android:textSize="11sp" />
+                android:text="클라우드 동기화 완료 ✓"
+                android:textColor="@color/status_green"
+                android:textSize="11sp"
+                android:textStyle="bold" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Bottom Bar: Seamless Cockpit Demo & Quick Action Controls -->
+    <!-- Bottom Bar: Zero-Click Policy Explanation & Compact Simulation Controls -->
     <LinearLayout
-        android:id="@+id/cardControls"
+        android:id="@+id/bottomBar"
         android:layout_width="0dp"
-        android:layout_height="52dp"
+        android:layout_height="38dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="💡 주행(D단) 중 무조작 백그라운드 자동 기록  ➔  정차(P단) 시 운행일지 자동 확정 (Zero-Click)"
+            android:textColor="@color/text_muted"
+            android:textSize="12sp" />
+
+        <!-- Simulation Buttons for Evaluation / Demo -->
         <Button
             android:id="@+id/btnShiftD"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginEnd="8dp"
-            android:layout_weight="1"
             android:background="@drawable/bg_btn_primary"
+            android:paddingHorizontal="14dp"
             android:stateListAnimator="@null"
-            android:text="🚀 D단 출발 (기록 시작)"
+            android:text="D단 출발 시뮬레이션"
             android:textColor="@color/white"
-            android:textSize="14sp"
+            android:textSize="12sp"
             android:textStyle="bold"
             app:backgroundTint="@null" />
 
         <Button
             android:id="@+id/btnShiftP"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginEnd="8dp"
-            android:layout_weight="1"
             android:background="@drawable/bg_btn_success"
+            android:paddingHorizontal="14dp"
             android:stateListAnimator="@null"
-            android:text="🅿️ P단 정차 (일지 완료)"
+            android:text="P단 정차 시뮬레이션"
             android:textColor="@color/white"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            app:backgroundTint="@null" />
-
-        <Button
-            android:id="@+id/btnToggleSpeed"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/bg_btn_secondary"
-            android:stateListAnimator="@null"
-            android:text="⚡ 시뮬레이션 속도 변경"
-            android:textColor="@color/text_primary"
-            android:textSize="13sp"
+            android:textSize="12sp"
             android:textStyle="bold"
             app:backgroundTint="@null" />
     </LinearLayout>
