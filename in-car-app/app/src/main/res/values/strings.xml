@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Pleos Log</string>
+    <string name="in_car_agent_title">Pleos Log In-Car Agent</string>
+    <string name="default_vehicle_title">12가 3456 • 아이오닉 6</string>
+    <string name="pairing_code_label">PIN: 729104</string>
+    <string name="server_online">서버 연결됨</string>
+    <string name="server_offline">서버 오프라인</string>
+    <string name="status_idle">대기 중 (IDLE)</string>
+    <string name="status_driving">주행 기록 중 (DRIVING)</string>
+    <string name="speed_unit">km/h</string>
+    <string name="odometer_label">누적 계기판 거리 (ODO)</string>
+    <string name="btn_shift_d">D단 출발 (주행 시작)</string>
+    <string name="btn_shift_p">P단 정차 (주행 완료)</string>
+    <string name="btn_toggle_speed">시뮬레이션 속도 변경</string>
+    <string name="driving_mode_business">업무용 자동 기록 모드</string>
+</resources>

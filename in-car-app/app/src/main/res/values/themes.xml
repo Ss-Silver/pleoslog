@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.PleosLogCar" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="android:windowBackground">@color/cockpit_bg</item>
+        <item name="colorPrimary">@color/hyundai_sky</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSurface">@color/cockpit_surface</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="android:statusBarColor">@color/cockpit_bg</item>
+        <item name="android:navigationBarColor">@color/cockpit_bg</item>
+    </style>
+</resources>

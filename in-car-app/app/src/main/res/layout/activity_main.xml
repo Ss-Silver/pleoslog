@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/cockpit_bg"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="24dp">
+
+        <!-- Header: App Title, Vehicle, Pairing Code, Server Status -->
+        <LinearLayout
+            android:id="@+id/headerLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:src="@drawable/ic_car_launcher"
+                android:contentDescription="@string/app_name" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvAppTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/in_car_agent_title"
+                    android:textColor="@color/text_primary"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvVehicleInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/default_vehicle_title"
+                    android:textColor="@color/hyundai_sky"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Pairing PIN Code -->
+            <TextView
+                android:id="@+id/tvPairingCode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_status_badge"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="8dp"
+                android:text="@string/pairing_code_label"
+                android:textColor="@color/hyundai_sky"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <!-- Server Connection Status -->
+            <TextView
+                android:id="@+id/tvServerStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:background="@drawable/bg_status_badge"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="8dp"
+                android:text="@string/server_online"
+                android:textColor="@color/status_green"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Main Cockpit: Left Speedometer Card -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cardSpeedometer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="12dp"
+            android:background="@drawable/bg_cockpit_card"
+            android:padding="28dp"
+            app:layout_constraintEnd_toStartOf="@+id/cardSessionState"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/headerLayout">
+
+            <TextView
+                android:id="@+id/tvSpeedLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="VEHICLE SPEED"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvCurrentSpeed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="0"
+                android:textColor="@color/text_primary"
+                android:textSize="64sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvSpeedLabel" />
+
+            <TextView
+                android:id="@+id/tvSpeedUnit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginBottom="16dp"
+                android:text="@string/speed_unit"
+                android:textColor="@color/text_muted"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/tvCurrentSpeed"
+                app:layout_constraintStart_toEndOf="@id/tvCurrentSpeed" />
+
+            <!-- Gear Selector Row -->
+            <LinearLayout
+                android:id="@+id/gearSelectorLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvCurrentSpeed">
+
+                <TextView
+                    android:id="@+id/gearP"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginHorizontal="6dp"
+                    android:background="@drawable/bg_gear_active_p"
+                    android:gravity="center"
+                    android:text="P"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/gearR"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginHorizontal="6dp"
+                    android:background="@drawable/bg_gear_badge"
+                    android:gravity="center"
+                    android:text="R"
+                    android:textColor="@color/gear_text_inactive"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/gearN"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginHorizontal="6dp"
+                    android:background="@drawable/bg_gear_badge"
+                    android:gravity="center"
+                    android:text="N"
+                    android:textColor="@color/gear_text_inactive"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/gearD"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginHorizontal="6dp"
+                    android:background="@drawable/bg_gear_badge"
+                    android:gravity="center"
+                    android:text="D"
+                    android:textColor="@color/gear_text_inactive"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Main Cockpit: Right Session State & Odometer Card -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cardSessionState"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="12dp"
+            android:background="@drawable/bg_cockpit_card"
+            android:padding="28dp"
+            app:layout_constraintBottom_toBottomOf="@+id/cardSpeedometer"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/cardSpeedometer"
+            app:layout_constraintTop_toTopOf="@+id/cardSpeedometer">
+
+            <TextView
+                android:id="@+id/tvSessionLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SESSION STATUS"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvSessionStatusBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_status_badge"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="6dp"
+                android:text="@string/status_idle"
+                android:textColor="@color/hyundai_sky"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvSessionLabel" />
+
+            <TextView
+                android:id="@+id/tvOdometerLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="@string/odometer_label"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvSessionStatusBadge" />
+
+            <TextView
+                android:id="@+id/tvOdometerValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="14,500.0 km"
+                android:textColor="@color/text_primary"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvOdometerLabel" />
+
+            <TextView
+                android:id="@+id/tvDrivingMode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/driving_mode_business"
+                android:textColor="@color/status_green"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Bottom Simulation Controls Bar -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cardControls"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/bg_cockpit_card"
+            android:padding="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cardSpeedometer">
+
+            <TextView
+                android:id="@+id/tvControlsTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DEMO &amp; VEHICLE SENSOR SIMULATOR"
+                android:textColor="@color/text_muted"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvControlsTitle">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnShiftD"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/hyundai_sky"
+                    android:text="@string/btn_shift_d"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="14dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnShiftP"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/status_green"
+                    android:text="@string/btn_shift_p"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="14dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnToggleSpeed"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/gear_inactive"
+                    android:text="@string/btn_toggle_speed"
+                    android:textColor="@color/text_primary"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="14dp" />
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
